@@ -11,7 +11,7 @@
  *   - Last 4 digits as-is rakho
  *   - Output format: "XXXX-XXXX-1234" (dashes after every 4 characters)
  *   - Hint: Use string methods like slice(), repeat(), and length
- *
+ *  
  * Validation:
  *   - Agar input string nahi hai, return "INVALID"
  *   - Agar string ki length exactly 12 nahi hai, return "INVALID"
