@@ -42,4 +42,101 @@
  */
 export function generateReportCard(student) {
   // Your code here
+   if (typeof student !== "object" || student === null || typeof student.name !== "string" || !student.name || typeof student.marks !== "object" || student.marks === null || Object.keys(student.marks).length === 0) {
+    return null;
+  }
+
+  const impossibleMarks = Object.values(student.marks).filter((key) => {
+    if (key > 100 || key < 0 || typeof key !== "number") {
+      return key;
+    }
+  })
+
+  if (impossibleMarks.length > 0) {
+    return null;
+  }
+
+  const name = student.name;
+  let totalMarks = 0;
+  Object.values(student.marks).forEach((mark) => {
+    totalMarks = totalMarks + mark;
+  })
+
+  const subjectCount = Object.keys(student.marks).length;
+  let percentage = ((totalMarks / (subjectCount * 100)) * 100);
+
+  if (!Number.isInteger(percentage)) {
+    percentage = parseFloat(percentage.toFixed(2));
+  }
+  let grade = "";
+
+  if (percentage >= 90) {
+    grade = "A+";
+  } else if (percentage >= 80) {
+    grade = "A";
+  } else if (percentage >= 70) {
+    grade = "B";
+  } else if (percentage >= 60) {
+    grade = "C";
+  } else if (percentage >= 40) {
+    grade = "D";
+  } else {
+    grade = "F";
+  }
+
+  let highestSubject = "";
+  let highestMarks = 0;
+  let lowestSubject = "";
+  let lowestMarks = 100;
+
+  Object.entries(student.marks).forEach((key) => {
+    let current = Math.max(key[1], highestMarks);
+
+    if (key[1] === current) {
+      highestMarks = current;
+      highestSubject = key[0];
+    } else {
+      highestMarks = current;
+    }
+  })
+
+  Object.entries(student.marks).forEach((key) => {
+    let current = Math.min(key[1], lowestMarks);
+
+    if (key[1] === current) {
+      lowestMarks = current;
+      lowestSubject = key[0];
+    } else {
+      lowestMarks = current;
+    }
+  })
+
+  let passedSubjects = [];
+  Object.entries(student.marks).filter((key) => {
+    if (key[1] >= 40) {
+      passedSubjects.push(key[0]);
+      return key[0];
+    }
+  })
+  
+  let failedSubjects = [];
+  Object.entries(student.marks).filter((key) => {
+    if (key[1] < 40) {
+      failedSubjects.push(key[0]);
+      return key[0];
+    }
+  })
+
+  return {
+    name,
+    totalMarks,
+    percentage,
+    grade,
+    highestSubject,
+    lowestSubject,
+    passedSubjects,
+    failedSubjects,
+    subjectCount
+  }
+
 }

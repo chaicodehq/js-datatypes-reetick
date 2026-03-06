@@ -48,4 +48,83 @@
  */
 export function analyzeUPITransactions(transactions) {
   // Your code here
+  if (!Array.isArray(transactions) || transactions.length === 0) {
+    return null;
+  }
+
+  const validTransactions = transactions.filter((transaction) => {
+    if (transaction.amount > 0 && typeof transaction.amount === "number" && (transaction.type === "credit" || transaction.type === "debit")) {
+      return transaction;
+    }
+  })
+
+  if (validTransactions.length === 0) {
+    return null;
+  }
+
+  const totalTransaction = validTransactions.reduce((total, current) => {
+    return total + current.amount;
+  }, 0)
+
+  const totalCredit = validTransactions.reduce((total, current) => {
+    if (current.type === "credit") {
+      return total + current.amount;
+    } else {
+      return total;
+    }
+  }, 0)
+
+  const totalDebit = validTransactions.reduce((total, current) => {
+    if (current.type === "debit") {
+      return total + current.amount;
+    } else {
+      return total;
+    }
+  }, 0)
+
+  const netBalance = totalCredit - totalDebit;
+  const transactionCount = validTransactions.length;
+  const avgTransaction = totalTransaction / transactionCount;
+ 
+  const sortedTransactions = validTransactions.sort((a,b) => a.amount - b.amount);
+  const highestTransaction = sortedTransactions[sortedTransactions.length -1];
+
+  const categoryBreakdown = validTransactions.reduce((acc, current) => {
+    acc[current.category] = (acc[current.category] || 0) + current.amount;
+    return acc;
+  }, {});
+
+  const contactCount = {};
+  let frequentContact = validTransactions[0].to;
+  let maxCount = 0;
+
+  for (const current of validTransactions) {
+    contactCount[current.to] = (contactCount[current.to] || 0) + 1;
+
+    if (contactCount[current.to] > maxCount) {
+      maxCount = contactCount[current.to];
+      frequentContact = current.to;
+    }
+  }
+
+  const allAbove100 = validTransactions.every((current) => {
+    return current.amount > 100;
+  })
+
+  const hasLargeTransaction = validTransactions.some((current) => {
+    return current.amount >= 5000;
+  })
+
+  return {
+    totalCredit,
+    totalDebit,
+    netBalance,
+    transactionCount,
+    avgTransaction,
+    highestTransaction,
+    categoryBreakdown,
+    frequentContact,
+    allAbove100,
+    hasLargeTransaction
+  }
 }

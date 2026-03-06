@@ -28,5 +28,11 @@
  *   // => "INVALID"
  */
 export function maskAadhaar(aadhaarNumber) {
-  // Your code here
+    if (typeof aadhaarNumber !== 'string' || aadhaarNumber.length !== 12 || aadhaarNumber.includes("-", " ") || aadhaarNumber.match(/[a-z,A-Z]/)) {
+        return "INVALID"
+    }
+    const masked = "X".repeat(8) + aadhaarNumber.slice(8);
+    return masked.match(/.{1,4}/g).join("-");
+
+
 }
